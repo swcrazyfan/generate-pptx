@@ -89,16 +89,22 @@ def generate_pptx(lesson_topic):
 	full_prompt = "".join(prompt).format(lesson_topic=lesson_topic)
 
 	response = openai.ChatCompletion.create(
-		model="gpt-4",
-		messages=[
-			# ... (same as before)
-		],
-		max_tokens=650,
-		n=1,
-		stop=None,
-		temperature=0.7,
+	model="gpt-4",
+	messages=[
+		{
+			"role": "system",
+			"content": (
+					"You are a helpful assistant capable of creating clear and concise PowerPoint slide outlines used by teachers during their lessons based on a given lesson plan."
+			),
+		},
+		{"role": "user", "content": full_prompt},
+	],
+	max_tokens=650,
+	n=1,
+	stop=None,
+	temperature=0.7,
+	#    top_p=0.9,
 	)
-
 	output = response.choices[0].text.strip()
 
 	theme_pattern = re.compile(r"(dark|light|corporate|playful|modern|vibrant)")
