@@ -105,7 +105,7 @@ def generate_pptx(lesson_topic):
 	temperature=0.7,
 	#    top_p=0.9,
 	)
-	output = response.choices[0].text.strip()
+	output = response.choices[0].message['content'].strip()
 
 	theme_pattern = re.compile(r"(dark|light|corporate|playful|modern|vibrant)")
 	theme_match = theme_pattern.search(output)
