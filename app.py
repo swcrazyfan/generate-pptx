@@ -86,7 +86,7 @@ def generate_pptx(lesson_topic):
 		# ... (same as before)
 	)
 
-	full_prompt = prompt.format(lesson_topic=lesson_topic)
+	full_prompt = "".join(prompt).format(lesson_topic=lesson_topic)
 
 	response = openai.ChatCompletion.create(
 		model="gpt-4",
