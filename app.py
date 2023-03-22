@@ -44,7 +44,10 @@ def apply_theme(presentation, theme):
 		text_color = RGBColor(255, 255, 255)
 		font_name = "Verdana"
 	else:
-		raise ValueError("Unsupported theme")
+		# Default theme
+		background_color = RGBColor(239, 239, 239)
+		text_color = RGBColor(32, 32, 32)
+		font_name = "Calibri"
 
 	for slide in presentation.slides:
 		slide.background.fill.solid()
