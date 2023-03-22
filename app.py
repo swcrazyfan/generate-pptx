@@ -178,8 +178,13 @@ def generate_pptx(lesson_topic):
 
 			# Extract the lesson title from the first slide
 			first_slide_data = slides_data[0]
-			first_slide_title = first_slide_data.split('\n')[0].split(':', 1)[-1].strip()
-
+			first_slide_title_line = first_slide_data.split('\n')[0]
+			
+			if "Slide" in first_slide_title_line:
+				first_slide_title = first_slide_title_line.split(':', 1)[-1].strip()
+			else:
+				first_slide_title = "PowerPoint_from_Lesson_Plan"
+				
 			s3_bucket_name = os.environ["S3_BUCKET_NAME"]
 			file_key = f"{first_slide_title.replace(' ', '_')}_presentation.pptx"
 			presigned_url = upload_to_s3_and_get_temporary_url(s3_bucket_name, temp_file_path, file_key, expiration=3600)
