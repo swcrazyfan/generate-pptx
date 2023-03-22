@@ -1,0 +1,7 @@
+openai
+python-pptx
+boto3
+botocore
+streamlit
+fontawesome
+Pillow
