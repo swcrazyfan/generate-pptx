@@ -109,7 +109,10 @@ def generate_pptx(lesson_topic):
 
 	theme_pattern = re.compile(r"(dark|light|corporate|playful|modern|vibrant)")
 	theme_match = theme_pattern.search(output)
-	theme = theme_match.group(0)
+	if theme_match:
+		theme = theme_match.group(0)
+	else:
+		theme = "default"  # or any default theme you want to use
 
 	output = theme_pattern.sub("", output).strip()
 
@@ -165,7 +168,7 @@ def generate_pptx(lesson_topic):
 	return {'temporary_url': presigned_url}
 
 st.title("PowerPoint Presentation Generator")
-lesson_topic = st.text_input("Enter the lesson topic:")
+lesson_topic = st.text_area("Enter the lesson topic:")
 
 if st.button("Generate Presentation"):
 	if lesson_topic:
