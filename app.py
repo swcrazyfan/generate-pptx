@@ -109,7 +109,7 @@ def generate_pptx(lesson_topic):
 		{
 			"role": "system",
 			"content": (
-					"You are a helpful assistant capable of creating clear and concise PowerPoint slide outlines used by teachers during their lessons based on a given lesson plan."
+					"You are a helpful assistant capable of creating clear and concise PowerPoint slide outlines used by teachers during their lessons based on a given lesson plan. You follow template instructions carefully"
 			),
 		},
 		{"role": "user", "content": full_prompt},
@@ -117,7 +117,7 @@ def generate_pptx(lesson_topic):
 	max_tokens=650,
 	n=1,
 	stop=None,
-	temperature=0.7,
+	temperature=0.8,
 	#    top_p=0.9,
 	)
 	output = response.choices[0].message['content'].strip()
@@ -149,26 +149,21 @@ def generate_pptx(lesson_topic):
 
 		placeholder_shape = None
 
-		has_image_or_icon = False
 		for line in content:
 			if re.match(r"Image Placeholder|Icon:", line):
 				image_placeholder_left = Inches(4.5)
 				placeholder_shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, image_placeholder_left, Inches(1.5), Inches(2), Inches(2))
 				if "Icon" in line:
 					icon_code = line.split("Icon:")[-1].strip()
-					icon = fa.icons[icon_code]
-					placeholder_shape.text_frame.text = icon
-					placeholder_shape.text_frame.paragraphs[0].runs[0].font.name = "Font Awesome 5 Free"
-					placeholder_shape.text_frame.paragraphs[0].runs[0].font.bold = True
-					placeholder_shape.text_frame.paragraphs[0].runs[0].font.size = Pt(72)
-				else:
-					placeholder_shape.text_frame.text = line.strip()
-					placeholder_shape.text_frame.paragraphs[0].runs[0].font.bold = True
-					placeholder_shape.text_frame.paragraphs[0].runs[0].font.size = Inches(0.25)
-			else:
-				paragraph = content_text.add_paragraph()
-				paragraph.text = line.strip()
-				paragraph.space_before = Inches(0.1)
+					icon = fa.icons.get(icon_code)
+					
+					if icon is not None:
+						placeholder_shape.text_frame.text = icon
+						placeholder_shape.text_frame.paragraphs[0].runs[0].font.name = "Font Awesome 5 Free"
+						placeholder_shape.text_frame.paragraphs[0].runs[0].font.bold = True
+						placeholder_shape.text_frame.paragraphs[0].runs[0].font.size = Pt(72)
+					else:
+						placeholder_shape.text_frame.text = f"Icon not found: {icon_code}"
 
 		apply_theme(ppt, theme)
 
