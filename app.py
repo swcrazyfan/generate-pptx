@@ -86,7 +86,19 @@ def upload_to_s3_and_get_temporary_url(bucket_name, file_path, file_key, expirat
 
 def generate_pptx(lesson_topic):
 	prompt = (
-		# ... (same as before)
+		"Create PowerPoint slides for a lesson plan. The slides should be visually engaging, include concise headings and bullet points, and have relevant images or icons when necessary. Limit each slide to a maximum of 4 sub-points and a single image or icon when relevant. Divide the same heading into multiple slides if required to make the points more clear."
+		"\n\nFor the first slide, include the lesson title and relevant sub-points. Also, include a closing slide with takeaways from the lesson. Choose a PowerPoint theme from these options: dark, light, corporate, playful, modern, and vibrant, depending on the lesson's context."
+		"\n\nThe output should be suitable for use with the python-pptx library to create a PowerPoint presentation."
+		"\n\nLesson Plan:\n{lesson_topic}"
+		"\n\nFor each slide, provide this information:\n\n"
+		"#. Slide (slide_title):\n"
+		"Heading: concise_heading\n"
+		"Sub-point 1:\n"
+		"Sub-point 2:\n"
+		"...\n"
+		"If an image is relevant, include: 'Image: short_description_of_image'\n"
+		"If an icon is relevant, include: 'Icon: font_awesome_icon_code'\n"
+		"When creating the slides, remember to use clear and concise language, write the slides for the students to understand, and use appropriate images or icons, and choose a suitable theme for the PowerPoint presentation."
 	)
 
 	full_prompt = "".join(prompt).format(lesson_topic=lesson_topic)
@@ -164,8 +176,12 @@ def generate_pptx(lesson_topic):
 			ppt.save(tmp_ppt_file.name)
 			temp_file_path = tmp_ppt_file.name
 
+			# Extract the lesson title from the first slide
+			first_slide_data = slides_data[0]
+			first_slide_title = first_slide_data.split('\n')[0].split(':', 1)[-1].strip()
+
 			s3_bucket_name = os.environ["S3_BUCKET_NAME"]
-			file_key = f"{lesson_topic.replace(' ', '_')}_presentation.pptx"
+			file_key = f"{first_slide_title.replace(' ', '_')}_presentation.pptx"
 			presigned_url = upload_to_s3_and_get_temporary_url(s3_bucket_name, temp_file_path, file_key, expiration=3600)
 
 	return {'temporary_url': presigned_url}
